@@ -1,0 +1,32 @@
+﻿<Window
+    x:Class="ExampleCustom.Comment"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ExampleCustom"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="476.801"
+    Height="136.335"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <DockPanel Margin="10">
+        <TextBlock DockPanel.Dock="Top" Text="Comment" />
+        <StackPanel
+            Margin="0,5,0,0"
+            HorizontalAlignment="Center"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="50"
+                Margin="0,0,5,0"
+                Content="OK" Click="Button_Click" />
+            <Button
+                MinWidth="50"
+                Margin="5,0,0,0"
+                Content="Cancel" IsCancel="True" />
+        </StackPanel>
+        <TextBox x:Name="txtComment" />
+    </DockPanel>
+</Window>

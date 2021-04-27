@@ -1,0 +1,346 @@
+﻿<UserControl
+    x:Class="ExampleCustom.Clash"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ExampleCustom"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="#FFF1F1F1"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:BoolToVisibility x:Key="boolToVisibility" />
+        <Style x:Key="nonBorderBtn" TargetType="ContentControl">
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Border>
+                            <ContentPresenter Content="{TemplateBinding Content}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style
+            x:Key="nonBorder"
+            BasedOn="{StaticResource nonBorderBtn}"
+            TargetType="ContentControl">
+            <Setter Property="Foreground" Value="DarkGray" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style x:Key="toggleBtn" TargetType="ToggleButton">
+            <Setter Property="IsChecked" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Polygon
+                                x:Name="expand"
+                                VerticalAlignment="Center"
+                                Fill="Red"
+                                Points="0,0 5,10 10,0"
+                                Stroke="Red" />
+                            <Label
+                                x:Name="contentPresenter"
+                                Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Content}"
+                                FontSize="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=FontSize}"
+                                FontWeight="Bold"
+                                Foreground="Red" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Button.IsDefaulted" Value="True" />
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True" />
+                            <Trigger Property="ToggleButton.IsChecked" Value="False">
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="Gray" />
+                                <Setter TargetName="expand" Property="Polygon.Points" Value="0,0 10,5 0,10" />
+                                <Setter TargetName="expand" Property="Shape.Fill" Value="Gray" />
+                                <Setter TargetName="expand" Property="Shape.Stroke" Value="Gray" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="status" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="Active">
+                    <Setter Property="Foreground" Value="Green" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="Pendding">
+                    <Setter Property="Foreground" Value="Orange" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="Finished">
+                    <Setter Property="Foreground" Value="Gray" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="Reviewed">
+                    <Setter Property="Foreground" Value="Blue" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            BorderBrush="Gray"
+            BorderThickness="0,0,0,1">
+            <DockPanel>
+                <ToggleButton
+                    x:Name="btnShow"
+                    Content="{Binding ClashTitle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                    FontSize="11"
+                    Style="{StaticResource toggleBtn}" />
+                <Label
+                    HorizontalAlignment="Right"
+                    VerticalContentAlignment="Center"
+                    Content="{Binding Tolerance, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                    DockPanel.Dock="Right"
+                    FontSize="11"
+                    Foreground="Gray" />
+            </DockPanel>
+        </Border>
+        <Grid
+            x:Name="infoGrid"
+            Grid.Row="1"
+            Visibility="{Binding ElementName=btnShow, Path=IsChecked, Converter={StaticResource boolToVisibility}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border
+                Margin="0,7,0,0"
+                BorderBrush="Gray"
+                BorderThickness="1">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        x:Name="headerContainer"
+                        Margin="5"
+                        Orientation="Horizontal">
+                        <Image
+                            Width="60"
+                            Height="60"
+                            Source="test.jpg"
+                            Stretch="Fill" />
+                        <StackPanel Margin="10,0,0,0" Orientation="Vertical">
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=ClashName}" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Assign To: " />
+                                <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=Assign}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Grid Location: " />
+                                <TextBlock Text="{Binding Path=GridLocation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Date Found: " />
+                                <TextBlock Text="{Binding Path=DateFound, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="5">
+                        <DockPanel>
+                            <TextBlock Text="Status:" />
+                            <ToggleButton
+                                x:Name="btnShowDetail"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource toggleBtn}" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Style="{StaticResource status}"
+                                Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=Status}" />
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Last update: " />
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=LastUpdate}" />
+                        </StackPanel>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Margin="0,0,5,0"
+                                Click="ButtonShow3D_Click"
+                                Content="Show 3D" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                Click="ButtonZoom_Click"
+                                Content="Select Zoom" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border
+                Grid.Row="1"
+                Margin="0,7,0,0"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Visibility="{Binding ElementName=btnShowDetail, Path=IsChecked, Converter={StaticResource boolToVisibility}}">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="5">
+                        <StackPanel Orientation="Horizontal">
+                            <Image
+                                Width="120"
+                                Height="120"
+                                VerticalAlignment="Top"
+                                Source="test.jpg"
+                                Stretch="Fill" />
+                            <StackPanel Margin="10,0,0,0" Orientation="Vertical">
+                                <StackPanel Name="clashInfo">
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="Bold"
+                                        Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=ClashName}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Assign To: " />
+                                        <TextBlock Text="{Binding Path=Assign, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Grid Location: " />
+                                        <TextBlock Text="{Binding Path=GridLocation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Date Found: " />
+                                        <TextBlock Text="{Binding Path=DateFound, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Margin="0,15,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Element ID: " />
+                                        <TextBlock Text="{Binding Path=ElementId1, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Layer: " />
+                                        <TextBlock Text="{Binding Path=Layer1, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Item Type: " />
+                                        <TextBlock Text="{Binding Path=ItemType1, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock>
+                                            Item Name
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=ItemName1}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Path: " />
+                                        <Button
+                                            Click="Button_Click"
+                                            Content="Click to copy"
+                                            FontStyle="Italic"
+                                            Foreground="Blue"
+                                            Style="{StaticResource nonBorder}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <Button
+                            MinWidth="100"
+                            Margin="0,5,0,0"
+                            HorizontalAlignment="Left"
+                            Click="ButtonComment_Click"
+                            Content="Comment" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="5">
+                        <DockPanel>
+                            <TextBlock Text="Status:" />
+                            <ToggleButton
+                                x:Name="btnShowLog"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource toggleBtn}" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Style="{StaticResource status}"
+                                Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=Status}" />
+                        </DockPanel>
+                        <TextBlock
+                            Height="{Binding ElementName=clashInfo, Path=ActualHeight}"
+                            Background="Gray"
+                            Text="{Binding UpdateInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                            Visibility="{Binding ElementName=btnShowLog, Path=IsChecked, Converter={StaticResource boolToVisibility}}" />
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Element ID: " />
+                                <TextBlock Text="{Binding Path=ElementId2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Layer: " />
+                                <TextBlock Text="{Binding Path=Layer2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Item Type: " />
+                                <TextBlock Text="{Binding Path=ItemType2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock>
+                                    Item Name
+                                </TextBlock>
+                                <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=ItemName2}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Path: " />
+                                <Button
+                                    Click="Button_Click_1"
+                                    Content="Click to copy"
+                                    FontStyle="Italic"
+                                    Foreground="Blue"
+                                    Style="{StaticResource nonBorder}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Margin="0,0,5,0"
+                                Click="ButtonShow3D_Click"
+                                Content="Show 3D" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                Click="ButtonZoom_Click"
+                                Content="Select Zoom" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

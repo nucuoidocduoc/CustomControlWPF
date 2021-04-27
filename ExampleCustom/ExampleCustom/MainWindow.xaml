@@ -1,0 +1,76 @@
+﻿<Window
+    x:Class="ExampleCustom.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:ExampleCustom"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Background="#FFE2E2E2"
+    Width="520"
+    Height="830"
+    mc:Ignorable="d">
+
+    <Grid Margin="5,10,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Project: " />
+                <ComboBox MinWidth="100" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="15,0,0,0">
+                <TextBlock Text="Filter: " />
+                <ComboBox MinWidth="100" />
+            </StackPanel>
+            <Button MinWidth="70" Content="Edit/New" HorizontalAlignment="Right" />
+        </DockPanel>
+        <ListView Grid.Row="1" ItemsSource="{Binding Clashes}" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <local:Clash
+                        Assign="{Binding Assign}"
+                        ClashTitle="{Binding ClashTitle}"
+                        Tolerance="{Binding Tolerance}"
+                        ClashName="{Binding ClashName}"
+                        DateFound="{Binding DateFound}"
+                        ElementId1="{Binding ElementId1}"
+                        ElementId2="{Binding ElementId2}"
+                        GridLocation="{Binding GridLocation}"
+                        ItemName1="{Binding ItemName1}"
+                        ItemName2="{Binding ItemName2}"
+                        ItemType1="{Binding ItemType1}"
+                        ItemType2="{Binding ItemType2}"
+                        LastUpdate="{Binding LastUpdate}"
+                        Layer1="{Binding Layer1}"
+                        Layer2="{Binding Layer2}"
+                        Path1="{Binding Path1}"
+                        Path2="{Binding Path2}"
+                        Status="{Binding Status}"
+                        UpdateInfo="{Binding UpdateInfo}">
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Zoom">
+                                <i:InvokeCommandAction Command="{Binding ZoomCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Show3D">
+                                <i:InvokeCommandAction Command="{Binding Show3DCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </local:Clash>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Window>
